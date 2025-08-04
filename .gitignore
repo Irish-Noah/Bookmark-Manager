@@ -1,0 +1,22 @@
+# Node dependencies
+node_modules/
+
+# Environment variables (not that big a deal for now)
+# .env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# VSCode settings (optional)
+.vscode/
+
+# MongoDB data directory (if using local DB dumps)
+dump/
