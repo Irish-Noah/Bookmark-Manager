@@ -10,8 +10,16 @@ servers:
 paths:
   /bookmarks:
     get:
-      summary: Get all bookmarks
-      tags: [Bookmarks]
+      summary: Get all bookmarks (optionally filtered by tag)
+      tags:
+        - Bookmarks
+      parameters:
+        - in: query
+          name: tag
+          schema:
+            type: string
+          required: false
+          description: Filter bookmarks by tag
       responses:
         '200':
           description: A list of bookmarks
@@ -21,34 +29,94 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Bookmark'
+        '400':
+          description: Invalid query parameter
+
     post:
       summary: Create a new bookmark
-      tags: [Bookmarks]
+      tags:
+        - Bookmarks
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Bookmark'
+              $ref: '#/components/schemas/BookmarkInput'
       responses:
         '201':
-          description: Bookmark created
+          description: Bookmark created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Bookmark'
         '400':
-          description: Missing title or URL
+          description: Invalid input
+        '409':
+          description: Bookmark with this URL already exists
+        '420':
+          description: Bookmark with this title already exists
+    put: 
+      summary: Update an existing bookmark by title or URL
+      tags: 
+        - Bookmarks
+      requestBody:
+        required: true
+        content:
+          application/json: 
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Existing bookmark title (optional if URL is provided)
+                url:
+                  type: string
+                  format: uri
+                  description: Existing bookmark URL (optional if title is provided)
+                updates: 
+                  type: object
+                  description: Fields to update (e.g. title, URL, tags)
+              required:
+                - updates
+      responses:
+        '200': 
+          description: Bookmark updated successfully
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/Bookmark'
+        '400':
+          description: Bad request
+        '404': 
+          description: Bookmark not found
+
+  /bookmarks/{id}:
+    delete:
+      summary: Delete a bookmark by ID
+      tags:
+        - Bookmarks
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The MongoDB ID of the bookmark
+      responses:
+        '200':
+          description: Bookmark deleted successfully
+        '404':
+          description: Bookmark not found
+        '500':
+          description: Server error
+
 
 components:
   schemas:
     Bookmark:
       type: object
-      required:
-        - title
-        - url
       properties:
-        id:
+        _id:
           type: string
         title:
           type: string
@@ -58,9 +126,18 @@ components:
           type: array
           items:
             type: string
-        createdAt:
+
+    BookmarkInput:
+      type: object
+      required:
+        - title
+        - url
+      properties:
+        title:
           type: string
-          format: date-time
-        updatedAt:
+        url:
           type: string
-          format: date-time
+        tags:
+          type: array
+          items:
+            type: string

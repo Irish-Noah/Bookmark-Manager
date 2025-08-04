@@ -6,6 +6,7 @@ Goal: A simple checklist that persists data between sessions and database connec
 ### Stack: 
 - JavaScript (Node.js + Express)
 - MongoDB (local)
+- Swagger
 
  ### Project Breakdown:
 - app.js -> Entry point for the app, sets up server and database
