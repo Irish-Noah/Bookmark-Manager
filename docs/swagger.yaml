@@ -1,0 +1,66 @@
+openapi: 3.0.0
+info:
+  title: Bookmark Manager API
+  version: 1.0.0
+  description: A simple API to manage bookmarks
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /bookmarks:
+    get:
+      summary: Get all bookmarks
+      tags: [Bookmarks]
+      responses:
+        '200':
+          description: A list of bookmarks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bookmark'
+    post:
+      summary: Create a new bookmark
+      tags: [Bookmarks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bookmark'
+      responses:
+        '201':
+          description: Bookmark created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bookmark'
+        '400':
+          description: Missing title or URL
+
+components:
+  schemas:
+    Bookmark:
+      type: object
+      required:
+        - title
+        - url
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        url:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
